@@ -1,0 +1,151 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+typedef unsigned short ushort;
+
+struct historydate
+{
+    const char* name;
+    ushort year;
+};
+
+void sortname(historydate* listpointer, int length);
+
+void sortdate(historydate* listpointer, int length);
+
+void interval(historydate* listpointer, int first, int second);
+
+void commonletter(historydate* listpointer, int length, int depth);
+
+
+int main ()
+{
+  const int size=5;
+  historydate *datelist = new historydate[size];
+     
+  datelist[0] = {"World War II",1941};
+  datelist[1] = {"Dropping the atomic bomb on Hiroshima",1945};
+  datelist[2] = {"World War I",1914};
+  datelist[3] = {"The fall of the Berlin Wall",1989};
+  datelist[4] = {"Cuban Missile Crisis",1962};
+    
+  historydate *listpointer = new historydate[size];
+  for(int i=0; i<size; i++)
+    listpointer[i] = (datelist[i]);
+    
+  for(int i=0; i<size; i++)
+    cout<<i+1<<". "<<listpointer[i].name<<" "<<listpointer[i].year<<endl;
+
+  int option, first, second, depth;
+  cout << "\nHow to sort history dates:\n <1> sort by date\n <2> sort by name\n <3> interval between dates\n <4> most common letter\n <5> exit\n\n";
+  cin>>option;
+  
+  switch(option)
+  {
+      case 1:
+      sortdate(listpointer,size);
+      break;
+      case 2:
+      sortname(listpointer,size);
+      break;
+      case 3:
+      cout<<"Enter first date: \n";
+      cin>>first;
+      cout<<"Enter second date: \n";
+      cin>>second;
+      interval(listpointer, first, second);
+      break;
+      case 4:
+      cout<<"Enter depth of search: \n";
+      cin>>depth;
+      commonletter(listpointer, size, depth);
+      break;
+      case 5:
+      cout<<"Quitting program \n";
+      return 0;
+      default:
+      cout<<"Error: Current option doesn't exists.";
+      break;
+  }
+  
+  delete[] listpointer;
+  delete[] datelist;
+ 
+  return 0;
+}
+
+
+void sortname(historydate* listpointer, int length)
+{
+    historydate* temp = new historydate;
+    for(int i=0;i<length;i++)
+        for(int j=i+1;j<length;j++)
+            if(strcmp(listpointer[i].name, listpointer[j].name)>0)
+            {
+                temp->name = listpointer[i].name;
+                temp->year = listpointer[i].year;
+                listpointer[i].year = listpointer[j].year;
+                listpointer[i].name = listpointer[j].name;
+                listpointer[j].name = temp->name;
+                listpointer[j].year = temp->year;
+            }
+    
+    for(int i=0; i<length; i++)
+    cout<<i+1<<". "<<listpointer[i].name<<" "<<listpointer[i].year<<endl;
+    
+    delete []temp;
+};
+
+void sortdate(historydate* listpointer, int length)
+{
+    historydate* temp = new historydate;
+    int buffer = length;
+    while(length--)                       
+   {                                         
+	 bool swapped = false;                     
+	 for(int i = 0; i < length; i++)  
+	   {
+          if(listpointer[i].year > listpointer[i+1].year)
+		    {
+		     temp->name = listpointer[i].name;
+			 temp->year = listpointer[i].year;
+             listpointer[i].name = listpointer[i+1].name;
+             listpointer[i].year = listpointer[i+1].year;
+             listpointer[i+1].name = temp->name;
+             listpointer[i+1].year = temp->year;
+			 swapped = true;
+			}
+	    }
+	 if(swapped == false)
+	 break;
+	 } 
+	
+	for(int i=0; i<buffer; i++)
+    cout<<i+1<<". "<<listpointer[i].name<<" "<<listpointer[i].year<<endl;
+	
+    delete []temp;
+};
+
+void interval(historydate* listpointer, int first, int second)
+{
+    int bebra;
+    bebra=abs(listpointer[first-1].year-listpointer[second-1].year);
+    cout<<"Interval between "<<first<<" and " <<second<< " date: "<<bebra<<" years.\n";
+};
+
+void commonletter(historydate* listpointer, int length, int depth)
+{
+    int p[256];
+    int num, max = 0;
+    for (int i = 0; i< 256; i++) p[i] = 0;
+    for (int i = 0; i < length; i++)
+        for (int j = 0; j < depth; j++)
+            p[int(listpointer[i].name[j])]++;  
+
+    for (int i = 0; i < 256; i++)
+        if (p[i]>max) {max = p[i]; num = i;};
+
+    cout<<"Most common letter:\n>>"<<char(num);
+    
+};
